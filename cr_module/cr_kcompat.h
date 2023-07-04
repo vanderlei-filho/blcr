@@ -261,15 +261,17 @@
   cr_mmap_pgoff(struct file *filp, unsigned long addr,
                 unsigned long len, unsigned long prot,
                 unsigned long flags, unsigned long pgoff) {
-    unsigned long populate;
-    return do_mmap_pgoff(filp, addr, len, prot, flags, pgoff, &populate);
+    unsigned long populate = 0;
+    struct list_head *uf = NULL;
+    return do_mmap_pgoff(filp, addr, len, prot, flags, pgoff, &populate, uf);
   }
 #elif HAVE_DO_MMAP
   #define cr_mmap_pgoff(_filp, _start, _len, _prot, _flags, _pgoff) \
-                do_mmap(_filp, _start, _len, _prot, _flags, ((_pgoff) << PAGE_SHIFT))
+                do_mmap(_filp, _start, _len, _prot, _flags, 0, _pgoff, NULL, NULL)
 #else
   #error "Neither do_mmap() nor do_mmap_pgoff() was found?"
 #endif
+
 
 // Task accessor macros
 #if HAVE_2_6_24_TASK_IDS
